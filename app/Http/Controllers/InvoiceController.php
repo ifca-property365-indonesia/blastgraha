@@ -96,14 +96,14 @@ class InvoiceController extends Controller
                     'rowID' => $dt[$i]['rowID']
                 );
 
-                $env = env(key: 'PAYMENT_MODE_GAK');
+                $env = env('PAYMENT_MODE_GAK');
 
                 if($env == 'sandbox') {
-                    $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
-                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_GAK');
+                    $url = env('API_GATEWAY_SANDBOX_GAK');
+                    $url_filepath = env('ROOT_INVOICE_FILE_PATH_GAK');
                 } else {
-                    $url = env(key : 'API_GATEWAY_GAK');
-                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_PROD_GAK');
+                    $url = env('API_GATEWAY_GAK');
+                    $url_filepath = env('ROOT_INVOICE_FILE_PATH_PROD_GAK');
                 }
 
                 $filePath = $url_filepath . 'invoice/' . $filenames;
@@ -248,15 +248,15 @@ class InvoiceController extends Controller
         if (!is_null($invoice_detail)) {
             $filenames = $invoice_detail->filenames;
 
-            $env = env(key: 'PAYMENT_MODE_GAK');
+            $env = env('PAYMENT_MODE_GAK');
 
             if($env == 'sandbox'){
-                $ftpServer = env(key: 'FTP_INVOICE_SERVER_GAK');
-                $ftpUser = env(key: 'FTP_INVOICE_USER_GAK');
+                $ftpServer = env('FTP_INVOICE_SERVER_GAK');
+                $ftpUser = env('FTP_INVOICE_USER_GAK');
                 $ftpPassword = env('FTP_INVOICE_PASSWORD_GAK');
             } else {
-                $ftpServer = env(key: 'FTP_INVOICE_SERVER_PROD_GAK');
-                $ftpUser = env(key: 'FTP_INVOICE_USER_PROD_GAK');
+                $ftpServer = env('FTP_INVOICE_SERVER_PROD_GAK');
+                $ftpUser = env('FTP_INVOICE_USER_PROD_GAK');
                 $ftpPassword = env('FTP_INVOICE_PASSWORD_PROD_GAK');
             }
 

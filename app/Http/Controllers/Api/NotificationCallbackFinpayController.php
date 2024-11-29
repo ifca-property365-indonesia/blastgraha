@@ -33,14 +33,14 @@ class NotificationCallbackFinpayController extends Controller
             unset($responseArray['signature']);
             $payloadJson = json_encode($responseArray, JSON_UNESCAPED_SLASHES);
 
-            $env = env(key: 'PAYMENT_MODE_GAK');
+            $env = env('PAYMENT_MODE_GAK');
 
             if($env == 'sandbox') {
-                $merchantKey = env(key: 'MERCHANT_KEY_SANDBOX_GAK');
+                $merchantKey = env('MERCHANT_KEY_SANDBOX_GAK');
 
                 $hashSignature = hash_hmac("sha512", $payloadJson, $merchantKey);
             } else {
-                $merchantKey = env(key: 'MERCHANT_KEY_GAK');
+                $merchantKey = env('MERCHANT_KEY_GAK');
 
                 $hashSignature = hash_hmac("sha512", $payloadJson, $merchantKey);
             }

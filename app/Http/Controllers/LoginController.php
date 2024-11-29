@@ -22,12 +22,12 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        $env = env(key: 'PAYMENT_MODE_GAK');
+        $env = env('PAYMENT_MODE_GAK');
 
         if($env == 'sandbox'){
-            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+            $url = env('API_GATEWAY_SANDBOX_GAK');
         }else{
-            $url = env(key: 'API_GATEWAY_GAK');
+            $url = env('API_GATEWAY_GAK');
         }
 
         // Mengirim permintaan POST ke API login

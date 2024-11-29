@@ -19,12 +19,12 @@ class DashboardController extends Controller
         $year = Carbon::now('Asia/Jakarta')->format('Y');
         $month = Carbon::now('Asia/Jakarta')->format('m');
 
-        $env = env(key: 'PAYMENT_MODE_GAK');
+        $env = env('PAYMENT_MODE_GAK');
 
         if($env == 'sandbox'){
-            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+            $url = env('API_GATEWAY_SANDBOX_GAK');
         } else {
-            $url = env(key: 'API_GATEWAY_GAK');
+            $url = env('API_GATEWAY_GAK');
         }
 
         $data_whatsapp = Http::get($url . 'whatsapp/kuota?company_cd=' . $company . '&year=' . $year . '&month=' . $month);
@@ -107,12 +107,12 @@ class DashboardController extends Controller
         $year = $data['year'];
         $month = Carbon::now('Asia/Jakarta')->format('m');
 
-        $env = env(key: 'PAYMENT_MODE_GAK');
+        $env = env('PAYMENT_MODE_GAK');
 
         if($env == 'sandbox'){
-            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+            $url = env('API_GATEWAY_SANDBOX_GAK');
         } else {
-            $url = env(key: 'API_GATEWAY_GAK');
+            $url = env('API_GATEWAY_GAK');
         }
 
         $email_month = Http::get($url . 'whatsapp/kuota_month?company_cd=' . $company . '&year=' . $year);
