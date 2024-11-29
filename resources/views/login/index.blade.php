@@ -132,7 +132,7 @@
                     <!--begin::Menu-->
                     <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
                         <li class="menu-item">
-                            @if (env('GAK_PAYMENT_MODE') == 'sandbox')
+                            @if (env('PAYMENT_MODE_GAK') == 'sandbox')
                             <span class="badge py-3 px-2 fs-7 badge-light-warning">SANDBOX MODE</span>
                             @endif
                         </li>

@@ -43,21 +43,21 @@ class InvoiceMail extends Mailable
         if ($this->mailData['process_id'] != '0') {
             // foreach ($this->mailData['detail'] as $files) {
             if ($this->mailData['detail']->filenames != null) {
-                $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames, [
+                $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames, [
                     'as' => $this->mailData['detail']->filenames,
                     'mime' => 'application/pdf',
                 ]);
             }
 
             if ($this->mailData['detail']->filenames2 != null) {
-                $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames2, [
+                $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames2, [
                     'as' => $this->mailData['detail']->filenames2,
                     'mime' => 'application/pdf',
                 ]);
             }
 
             if ($this->mailData['detail']->filenames3 != null) {
-                $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames3, [
+                $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/HISTORY_INVOICE/' . $this->mailData['detail']->filenames3, [
                     'as' => $this->mailData['detail']->filenames3,
                     'mime' => 'application/pdf',
                 ]);
@@ -65,20 +65,20 @@ class InvoiceMail extends Mailable
             // }
         } else {
             foreach ($this->mailData['detail'] as $files) {
-                $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/' . $files->filenames, [
+                $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/' . $files->filenames, [
                     'as' => $files->filenames,
                     'mime' => 'application/pdf',
                 ]);
 
                 if ($files['filenames2'] != null) {
-                    $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/' . $files->filenames2, [
+                    $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/' . $files->filenames2, [
                         'as' => $files->filenames2,
                         'mime' => 'application/pdf',
                     ]);
                 }
 
                 if ($files['filenames3'] != null) {
-                    $this->attach(env('ROOT_INVOICE_FILE_PATH') . 'Invoice/' . $files->filenames3, [
+                    $this->attach(env('ROOT_INVOICE_FILE_PATH_GAK') . 'Invoice/' . $files->filenames3, [
                         'as' => $files->filenames3,
                         'mime' => 'application/pdf',
                     ]);

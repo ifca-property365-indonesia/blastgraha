@@ -15,7 +15,7 @@ class Controller extends BaseController
     public function getProject()
     {
         $sql = "SELECT DISTINCT entity_cd, project_no FROM mgr.blast_doc WHERE entity_cd = ?";
-        $data = DB::select($sql, ['1001']);
+        $data = DB::select($sql, ['2001']);
         $comboProject[] = '';
 
         if (!empty($data)) {

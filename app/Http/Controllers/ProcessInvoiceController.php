@@ -35,7 +35,7 @@ class ProcessInvoiceController extends Controller
         $project_no = $dt['project'];
 
         $data = InvoiceView::where('submit_pay', '=', 'N')
-            ->where('entity_cd', '=', '1001');
+            ->where('entity_cd', '=', '2001');
 
         if ($project_no != 'all') {
             $data->where('project_no', '=', $project_no);
@@ -99,7 +99,7 @@ class ProcessInvoiceController extends Controller
     //                 'send' => $send
     //             );
 
-    //             if (env('GAK_PAYMENT_MODE') == 'sandbox') {
+    //             if (env('PAYMENT_MODE_GAK') == 'sandbox') {
     //                 $response = Http::withHeaders([
     //                     'client_id' => env('CLIENT_ID_SANDBOX'),
     //                     'client_secret' => env('CLIENT_SECRET_SANDBOX'),
@@ -193,8 +193,8 @@ class ProcessInvoiceController extends Controller
 
         if (!empty($dt)) {
             for ($i = 0; $i < count($dt); $i++) {
-                $email = 'pt.bumitartasedayu@citraswarna.com';
-                $company_name = 'Bumi Arta Sedayu';
+                $email = 'pt.grahaartakencana@citraswarna.com';
+                $company_name = 'Graha Artha Kencana';
                 $mobilePhone = $dt[$i]['wa_no'];
                 $amount = (int) $dt[$i]['amount'];
                 $doc_date = Carbon::createFromFormat('Y-m-d H:i:s.u', $dt[$i]['doc_date'])->format('Ymd');
@@ -218,18 +218,29 @@ class ProcessInvoiceController extends Controller
                     'timeout' => '43200'
                 ];
 
-                $url = [
+                $url_cb = [
                     'callbackUrl' => url('/api') . '/notification/payment'
                 ];
+                // dd($url);
 
-                $filePath = env('ROOT_INVOICE_FILE_PATH') . 'invoice/' . $filenames;
+                $env = env(key: 'PAYMENT_MODE_GAK');
+
+                if($env == 'sandbox') {
+                    $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_GAK');
+                } else {
+                    $url = env(key : 'API_GATEWAY_GAK');
+                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_PROD_GAK');
+                }
+
+                $filePath = $url_filepath . 'invoice/' . $filenames;
                 $headers = get_headers($filePath);
 
                 // mengecek file ada atau tidak 
                 if ($headers && strpos($headers[0], '200 OK') !== false) {
-                    if (env('GAK_PAYMENT_MODE') == 'sandbox') {
-                        $merchantID = env('MERCHANT_ID_SANDBOX');
-                        $merchantKey = env('MERCHANT_KEY_SANDBOX');
+                    if ($env == 'sandbox') {
+                        $merchantID = env('MERCHANT_ID_SANDBOX_GAK');
+                        $merchantKey = env('MERCHANT_KEY_SANDBOX_GAK');
                         $authentication = $merchantID . ":" . $merchantKey;
                         $encodeAuth = base64_encode($authentication);
 
@@ -239,11 +250,11 @@ class ProcessInvoiceController extends Controller
                         ])->post('https://devo.finnet.co.id/pg/payment/card/initiate', [
                                     'customer' => $customer,
                                     'order' => $order,
-                                    'url' => $url
+                                    'url' => $url_cb
                                 ]);
                     } else {
-                        $merchantID = env('MERCHANT_ID');
-                        $merchantKey = env('MERCHANT_KEY');
+                        $merchantID = env('MERCHANT_ID_GAK');
+                        $merchantKey = env('MERCHANT_KEY_GAK');
                         $authentication = $merchantID . ":" . $merchantKey;
                         $encodeAuth = base64_encode($authentication);
 
@@ -253,8 +264,8 @@ class ProcessInvoiceController extends Controller
                         ])->post('https://live.finnet.co.id/pg/payment/card/initiate', [
                                     'customer' => $customer,
                                     'order' => $order,
-                                    'url' => $url
-                                ]);
+                                    'url' => $url_cb
+                        ]);
                     }
 
                     $res = $response->json();
@@ -317,7 +328,7 @@ class ProcessInvoiceController extends Controller
                     } else {
                         $callback = array(
                             "Error" => true,
-                            "Pesan" => $callback['responseMessage']
+                            "Pesan" => $res['responseMessage']
                         );
                     }
                 } else {
@@ -369,7 +380,7 @@ class ProcessInvoiceController extends Controller
 
         $criteria = array(
             'submit_pay' => 'N',
-            'entity_cd' => '1001',
+            'entity_cd' => '2001',
             'doc_no' => $data['doc_no']
         );
 
@@ -378,9 +389,17 @@ class ProcessInvoiceController extends Controller
         if (!is_null($invoice_detail)) {
             $filenames = $invoice_detail->file_name;
 
-            $ftpServer = env('FTP_INVOICE_SERVER');
-            $ftpUser = env('FTP_INVOICE_USER');
-            $ftpPassword = env('FTP_INVOICE_PASSWORD');
+            $env = env(key: 'PAYMENT_MODE_GAK');
+
+            if($env == 'sandbox'){
+                $ftpServer = env(key: 'FTP_INVOICE_SERVER_GAK');
+                $ftpUser = env(key: 'FTP_INVOICE_USER_GAK');
+                $ftpPassword = env('FTP_INVOICE_PASSWORD_GAK');
+            } else {
+                $ftpServer = env(key: 'FTP_INVOICE_SERVER_PROD_GAK');
+                $ftpUser = env(key: 'FTP_INVOICE_USER_PROD_GAK');
+                $ftpPassword = env('FTP_INVOICE_PASSWORD_PROD_GAK');
+            }
 
             $ftp = ftp_connect($ftpServer);
 

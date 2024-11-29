@@ -155,7 +155,7 @@
                 render: function(data, type, row) {
                     email = "{{ Session::get('email') }}";
 
-                    if (email !== 'bas@ifca.co.id') {
+                    if (email !== 'demo.graha-artha@ifca.co.id') {
                         var html = '<span class="text-muted">-</span>';    
                     } else {
                         var html = 
@@ -342,7 +342,7 @@
     });
     
     function previewFile(datas) {
-        file_path = "{{ env('ROOT_INVOICE_FILE_PATH') }}";
+        file_path = "{{ env('ROOT_INVOICE_FILE_PATH_GAK') }}";
 
         window.open(file_path + 'invoice/' + datas, '__blank');
     }

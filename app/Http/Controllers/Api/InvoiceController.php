@@ -20,7 +20,7 @@ class InvoiceController extends Controller
             $data = InvoiceView::limit(50)
                 ->where('send_flag', '=', 'N')
                 ->where('submit_pay', '=', 'Y')
-                ->where('entity_cd', '=', '1001')
+                ->where('entity_cd', '=', '2001')
                 ->get();
 
             $dt = $data;
@@ -57,19 +57,29 @@ class InvoiceController extends Controller
                         'file_name' => $filenames,
                         'wa_no' => $wa_no,
                         'access_code' => $access_code,
-                        'environment' => env('GAK_PAYMENT_MODE')
+                        'environment' => env('PAYMENT_MODE_GAK')
                     );
 
                     $where = array(
                         'rowID' => $dt[$i]['rowID']
                     );
 
-                    $filePath = env('ROOT_INVOICE_FILE_PATH') . 'invoices/' . $filenames;
+                    $env = env(key: 'PAYMENT_MODE_GAK');
+
+                    if($env == 'sandbox') {
+                        $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+                        $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_GAK');
+                    } else {
+                        $url = env(key : 'API_GATEWAY_GAK');
+                        $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_PROD_GAK');
+                    }
+
+                    $filePath = $url_filepath . 'invoices/' . $filenames;
                     $headers = get_headers($filePath);
 
                     // mengecek file ada atau tidak 
                     if ($headers && strpos($headers[0], '200 OK') !== false) {
-                        $check_data = InvoiceHeader::where('entity_cd', '=', '1001')
+                        $check_data = InvoiceHeader::where('entity_cd', '=', '2001')
                             ->where('debtor_acct', '=', $debtor_acct)
                             ->where('paid_flag', '=', 'N')
                             ->whereIn('send_flag', ['Y', 'D', 'R'])
@@ -85,7 +95,7 @@ class InvoiceController extends Controller
                             ]);
 
                             $response = Http::post(
-                                env('API_WHATSAPP') . 'api/sendwa-bas',
+                                env('API_WHATSAPP_GAK') . 'api/sendwa-bas',
                                 $data_send
                             );
 
@@ -104,7 +114,7 @@ class InvoiceController extends Controller
                                 InvoiceHeader::where($where)->update($data_hdr_success);
 
                                 Http::post(
-                                    env('API_GATEWAY') . 'whatsapp/save',
+                                    $url . 'whatsapp/save',
                                     [
                                         'company_cd' => $company,
                                         'type_blast' => "invoice",
@@ -130,7 +140,7 @@ class InvoiceController extends Controller
                             }
                         } else {
                             $response = Http::post(
-                                env('API_WHATSAPP') . 'api/sendwa-bas',
+                                $url . 'api/sendwa-bas',
                                 $data_send
                             );
 
@@ -149,7 +159,7 @@ class InvoiceController extends Controller
                                 InvoiceHeader::where($where)->update($data_hdr_success);
 
                                 Http::post(
-                                    env('API_GATEWAY') . 'whatsapp/save',
+                                    $url . 'whatsapp/save',
                                     [
                                         'company_cd' => $company,
                                         'type_blast' => "invoice",

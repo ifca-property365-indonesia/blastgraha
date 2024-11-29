@@ -31,7 +31,7 @@ class InvoiceWhatsAppHistoryController extends Controller
         $status = $dt['status'];
 
         $data = InvoiceView::whereIn('send_flag', ['Y', 'D', 'R'])
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) >= ?', [$start_date])
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) <= ?', [$end_date])
             ->orderBy('send_date', 'desc');
@@ -58,7 +58,7 @@ class InvoiceWhatsAppHistoryController extends Controller
         $project_no = $dt['project'];
 
         $data = InvoiceView::whereIn('send_flag', ['F', 'E'])
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) >= ?', [$start_date])
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) <= ?', [$end_date])
             ->orderBy('send_date', 'desc');
@@ -112,20 +112,30 @@ class InvoiceWhatsAppHistoryController extends Controller
                     'file_name' => $filenames,
                     'wa_no' => $wa_no,
                     'access_code' => $access_code,
-                    'environment' => env('GAK_PAYMENT_MODE')
+                    'environment' => env('PAYMENT_MODE_GAK')
                 );
 
                 $where = array(
                     'rowID' => $dt[$i]['rowID']
                 );
 
-                $filePath = env('ROOT_INVOICE_FILE_PATH') . 'invoice/' . $filenames;
+                $env = env(key: 'PAYMENT_MODE_GAK');
+
+                if($env == 'sandbox') {
+                    $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_GAK');
+                } else {
+                    $url = env(key : 'API_GATEWAY_GAK');
+                    $url_filepath = env(key: 'ROOT_INVOICE_FILE_PATH_PROD_GAK');
+                }
+
+                $filePath = $url_filepath . 'invoice/' . $filenames;
                 $headers = get_headers($filePath);
 
                 // mengecek file ada atau tidak 
                 if ($headers && strpos($headers[0], '200 OK') !== false) {
                     $response = Http::post(
-                        env('API_WHATSAPP') . 'api/sendwa-bas',
+                        env('API_WHATSAPP_GAK') . 'api/sendwa-bas',
                         $data_send
                     );
 
@@ -143,7 +153,7 @@ class InvoiceWhatsAppHistoryController extends Controller
                         InvoiceHeader::where($where)->update($data_hdr_success);
 
                         Http::post(
-                            env('API_GATEWAY') . 'whatsapp/save',
+                            $url . 'whatsapp/save',
                             [
                                 'company_cd' => $company,
                                 'type_blast' => "invoice",

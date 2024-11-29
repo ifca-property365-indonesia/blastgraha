@@ -801,7 +801,7 @@
     });
 
     function previewFile(datas) {
-        file_path = "{{ env('ROOT_INVOICE_FILE_PATH') }}";
+        file_path = "{{ env('ROOT_INVOICE_FILE_PATH_GAK') }}";
 
         window.open(file_path + 'invoice/' + datas, '__blank');
     }

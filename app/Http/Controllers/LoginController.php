@@ -22,8 +22,16 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
+        $env = env(key: 'PAYMENT_MODE_GAK');
+
+        if($env == 'sandbox'){
+            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+        }else{
+            $url = env(key: 'API_GATEWAY_GAK');
+        }
+
         // Mengirim permintaan POST ke API login
-        $response = Http::post(env('API_GATEWAY') . 'login', [
+        $response = Http::post($url . 'login', [
             'email' => $request->email,
             'password' => $request->password
         ]);
@@ -49,6 +57,8 @@ class LoginController extends Controller
 
             // Regenerasi sesi
             $request->session()->regenerate();
+
+            
 
             // Redirect ke dashboard
             return redirect()->intended('dash');

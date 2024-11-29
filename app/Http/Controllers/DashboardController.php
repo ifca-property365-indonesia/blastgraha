@@ -19,7 +19,15 @@ class DashboardController extends Controller
         $year = Carbon::now('Asia/Jakarta')->format('Y');
         $month = Carbon::now('Asia/Jakarta')->format('m');
 
-        $data_whatsapp = Http::get(env('API_GATEWAY') . 'whatsapp/kuota?company_cd=' . $company . '&year=' . $year . '&month=' . $month);
+        $env = env(key: 'PAYMENT_MODE_GAK');
+
+        if($env == 'sandbox'){
+            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+        } else {
+            $url = env(key: 'API_GATEWAY_GAK');
+        }
+
+        $data_whatsapp = Http::get($url . 'whatsapp/kuota?company_cd=' . $company . '&year=' . $year . '&month=' . $month);
         $data_kuota_whatsapp = $data_whatsapp->json('Data');
 
         return view('dashboard.index', compact('data_kuota_whatsapp'));
@@ -39,35 +47,35 @@ class DashboardController extends Controller
 
         if ($data['type_blast'] == 'invoice') {
             $process_date = InvoiceHeader::where('send_flag', '=', 'N')
-                ->where('entity_cd', '=', '1001')
+                ->where('entity_cd', '=', '2001')
                 ->whereRaw('year(audit_date)*10000+month(audit_date)*100+day(audit_date) >= ?', [$start_date])
                 ->whereRaw('year(audit_date)*10000+month(audit_date)*100+day(audit_date) <= ?', [$end_date])
                 ->count();
 
             $deliver_date = InvoiceHeader::where('send_flag', '=', 'Y')
-                ->where('entity_cd', '=', '1001')
+                ->where('entity_cd', '=', '2001')
                 ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) >= ?', [$start_date])
                 ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) <= ?', [$end_date])
                 ->count();
 
             $reject_date = InvoiceHeader::where('send_flag', '=', 'F')
-                ->where('entity_cd', '=', '1001')
+                ->where('entity_cd', '=', '2001')
                 ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) >= ?', [$start_date])
                 ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) <= ?', [$end_date])
                 ->count();
         }
 
         $pending = InvoiceView::all()
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->count();
         $process = InvoiceHeader::where('send_flag', '=', 'N')
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->count();
         $deliver = InvoiceHeader::where('send_flag', '=', 'S')
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->count();
         $reject = InvoiceHeader::where('send_flag', '=', 'F')
-            ->where('entity_cd', '=', '1001')
+            ->where('entity_cd', '=', '2001')
             ->count();
 
         $dataset[] = array(
@@ -98,7 +106,16 @@ class DashboardController extends Controller
         $company = Session::get('company_cd');
         $year = $data['year'];
         $month = Carbon::now('Asia/Jakarta')->format('m');
-        $email_month = Http::get(env('API_GATEWAY') . 'whatsapp/kuota_month?company_cd=' . $company . '&year=' . $year);
+
+        $env = env(key: 'PAYMENT_MODE_GAK');
+
+        if($env == 'sandbox'){
+            $url = env(key: 'API_GATEWAY_SANDBOX_GAK');
+        } else {
+            $url = env(key: 'API_GATEWAY_GAK');
+        }
+
+        $email_month = Http::get($url . 'whatsapp/kuota_month?company_cd=' . $company . '&year=' . $year);
         $data_kuota_month = $email_month->json('Data');
 
         $totalJan = $data_kuota_month['Januari'];
@@ -114,7 +131,7 @@ class DashboardController extends Controller
         $totalNov = $data_kuota_month['November'];
         $totalDes = $data_kuota_month['Desember'];
 
-        $data_email = Http::get(env('API_GATEWAY') . 'whatsapp/kuota?company_cd=' . $company . '&year=' . $year . '&month=' . $month);
+        $data_email = Http::get($url . 'whatsapp/kuota?company_cd=' . $company . '&year=' . $year . '&month=' . $month);
         $data_kuota_email = $data_email->json('Data');
         $total_kuota = (int) $data_kuota_email['total_kuota'];
 
