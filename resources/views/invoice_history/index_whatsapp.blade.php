@@ -480,6 +480,9 @@
                     if (data == 'E') {
                         color = 'badge-light-secondary';
                         descs = 'No WhatsApp Number';
+                    } else if (data == 'M') {
+                        color = 'badge-light-warning';
+                        descs = 'No File';
                     } else {
                         color = 'badge-light-danger';
                         descs = 'Failed';
@@ -702,7 +705,7 @@
             return row.send_flag === 'E';
         });
         var filteredDataFlag = dataTableRows.filter(function (row) {
-            return row.send_flag === 'F';
+            return row.send_flag === 'F' || row.send_flag === 'M';
         });
 
         if (dataTableRows.length == 0)

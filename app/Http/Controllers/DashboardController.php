@@ -74,7 +74,7 @@ class DashboardController extends Controller
         $deliver = InvoiceHeader::where('send_flag', '=', 'S')
             ->where('entity_cd', '=', '2001')
             ->count();
-        $reject = InvoiceHeader::where('send_flag', '=', 'F')
+        $reject = InvoiceHeader::whereIn('send_flag', ['F', 'M'])
             ->where('entity_cd', '=', '2001')
             ->count();
 

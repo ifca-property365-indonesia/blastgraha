@@ -14,17 +14,20 @@ class Controller extends BaseController
 
     public function getProject()
     {
+        $entity = "2001";
+
         $sql = "SELECT DISTINCT entity_cd, project_no FROM mgr.blast_doc WHERE entity_cd = ?";
-        $data = DB::select($sql, ['2001']);
+        $data = DB::connection('sqlsrv')->select($sql, [$entity]);
         $comboProject[] = '';
 
-        if (!empty($data)) {
+        if (!empty($data) || empty($data)) {
             $comboProject[] = '<option value="all" data-ent="all">All</option>';
             foreach ($data as $dtProject) {
                 $comboProject[] = '<option value="' . $dtProject->project_no . '" data-ent="' . $dtProject->entity_cd . '">' . $dtProject->entity_cd . ' - ' . $dtProject->project_no . '</option>';
             }
             $comboProject = implode("", $comboProject);
-        }
+        } 
+        // }
 
         return $comboProject;
     }

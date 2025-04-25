@@ -174,7 +174,7 @@ class InvoiceController extends Controller
                         }
                     } else {
                         $response = Http::post(
-                            env('API_WHATSAPP_GAK') . 'api/sendwa-bas',
+                            env('API_WHATSAPP_GAK') . 'api/sendwa-gak',
                             $data_send
                         );
 

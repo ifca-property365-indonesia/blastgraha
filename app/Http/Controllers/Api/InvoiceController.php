@@ -42,7 +42,7 @@ class InvoiceController extends Controller
                     $pic_project_person = isset($dt[$i]['prj_contact_person']) ? $dt[$i]['prj_contact_person'] : '-';
                     $filenames = $dt[$i]['file_name'];
                     $wa_no = $dt[$i]['wa_no'];
-                    $access_code = "3";
+                    $access_code = "4";
 
                     $data_send = array(
                         'cust_name' => $debtor_name,
@@ -95,7 +95,7 @@ class InvoiceController extends Controller
                             ]);
 
                             $response = Http::post(
-                                env('API_WHATSAPP_GAK') . 'api/sendwa-bas',
+                                env('API_WHATSAPP_GAK') . 'api/sendwa-gak',
                                 $data_send
                             );
 
@@ -140,7 +140,7 @@ class InvoiceController extends Controller
                             }
                         } else {
                             $response = Http::post(
-                                $url . 'api/sendwa-bas',
+                                $url . 'api/sendwa-gak',
                                 $data_send
                             );
 

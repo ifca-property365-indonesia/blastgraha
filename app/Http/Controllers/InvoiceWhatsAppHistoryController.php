@@ -57,7 +57,7 @@ class InvoiceWhatsAppHistoryController extends Controller
         $end_date = Carbon::createFromFormat('d/m/Y', $dt['end_date'])->format('Ymd');
         $project_no = $dt['project'];
 
-        $data = InvoiceView::whereIn('send_flag', ['F', 'E'])
+        $data = InvoiceView::whereIn('send_flag', ['F', 'E', 'M'])
             ->where('entity_cd', '=', '2001')
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) >= ?', [$start_date])
             ->whereRaw('year(send_date)*10000+month(send_date)*100+day(send_date) <= ?', [$end_date])
@@ -97,7 +97,7 @@ class InvoiceWhatsAppHistoryController extends Controller
                 $pic_project_person = isset($dt[$i]['prj_contact_person']) ? $dt[$i]['prj_contact_person'] : '-';
                 $filenames = $dt[$i]['file_name'];
                 $wa_no = $dt[$i]['wa_no'];
-                $access_code = "3";
+                $access_code = "4";
 
                 $data_send = array(
                     'cust_name' => $debtor_name,
@@ -135,7 +135,7 @@ class InvoiceWhatsAppHistoryController extends Controller
                 // mengecek file ada atau tidak 
                 if ($headers && strpos($headers[0], '200 OK') !== false) {
                     $response = Http::post(
-                        env('API_WHATSAPP_GAK') . 'api/sendwa-bas',
+                        env('API_WHATSAPP_GAK') . 'api/sendwa-gak',
                         $data_send
                     );
 

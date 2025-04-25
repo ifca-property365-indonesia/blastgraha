@@ -30,7 +30,13 @@ class NotificationCallbackWhatsAppController extends Controller
                 } else if ($status == 'read') {
                     $send_flag = 'R';
                 } else {
-                    $send_flag = 'E';
+                    $code = $data['statuses'][0]['errors'][0]['code'];
+                    if ($code == '131053')
+                    {
+                        $send_flag = 'M';
+                    } else {
+                        $send_flag = 'E';
+                    }
                 }
 
                 $data_callback = array(
